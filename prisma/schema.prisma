@@ -1,0 +1,67 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["jsonProtocol"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Food {
+  id          Int      @id @default(autoincrement())
+  name        String
+  tags        String[]
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  type      String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Coin {
+  id        Int      @id @default(autoincrement())
+  name      String
+  symbol    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CustomCommand {
+  id        Int      @id @default(autoincrement())
+  command   String
+  response  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  secretKey String?
+}
+
+model AIModel {
+  id        Int      @id @default(autoincrement())
+  name      String
+  maxTokens Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AIToken {
+  id        Int       @id @default(autoincrement())
+  token     String
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model salary {
+  id         Int     @id @default(autoincrement())
+  applyMonth String
+  dateE      String
+  dateA      String?
+}
