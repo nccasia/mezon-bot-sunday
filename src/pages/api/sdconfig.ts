@@ -2,8 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../../../lib/prisma';
 import moment from 'moment';
 // import { aiTalk } from './sunday';
-const AdminKey = 'MySun001';
-
+const AdminKey = process.env.ADMIN_SECRET_KEY;
 
 const commandHandlers = {
   help: async (command: string, key: string) => {
@@ -27,11 +26,11 @@ const commandHandlers = {
 - manualUpdateSalaryDate <id-dateE-dateA> <key>: Cập nhật ngày nhận lương (cần quyền admin)
 - cleanSalaryDate <> <key>: Xóa tất cả ngày nhận lương (cần quyền admin)`;
   },
-example: async (command: string, key: string) => {
-  if (key !== AdminKey) {
-    return 'Không có quyền truy cập';
-  }
-  return `Ví dụ:
+  example: async (command: string, key: string) => {
+    if (key !== AdminKey) {
+      return 'Không có quyền truy cập';
+    }
+    return `Ví dụ:
 - add hello world
 - update hello world xin chào
 - lock 1 'Key'
@@ -46,8 +45,7 @@ example: async (command: string, key: string) => {
 - manualUpdateSalaryDate 1 2025/01/01 2025/01/01 'Key'
 - cleanSalaryDate 'Key'
 `;
-},
-
+  },
 
   add: async (command: string, value: string) => {
     const existingCommand = await prisma.customCommand.findFirst({
@@ -255,7 +253,7 @@ example: async (command: string, key: string) => {
     if (key !== AdminKey) {
       return 'Không có quyền truy cập';
     }
-    
+
     const [applyMonth, dateE, dateA] = command.split('-');
     if (!applyMonth || !dateE || !dateA) {
       return 'Thiếu thông tin';
@@ -273,15 +271,19 @@ example: async (command: string, key: string) => {
     if (key !== AdminKey) {
       return 'Không có quyền truy cập';
     }
-    
+
     const [id, dateE, dateA] = command.split('-');
     if (!id || !dateE) {
       return 'Thiếu thông tin';
     }
     await prisma.salary.update({
       where: { id: Number(id) },
-      data: { dateE: moment(dateE, 'YYYY/MM/DD').toDate().toISOString(), 
-        dateA: dateA ? moment(dateA, 'YYYY/MM/DD').toDate().toISOString() : null },
+      data: {
+        dateE: moment(dateE, 'YYYY/MM/DD').toDate().toISOString(),
+        dateA: dateA
+          ? moment(dateA, 'YYYY/MM/DD').toDate().toISOString()
+          : null,
+      },
     });
     return 'Done';
   },
@@ -292,10 +294,7 @@ example: async (command: string, key: string) => {
     await prisma.salary.deleteMany();
     return 'Done';
   },
-
 };
-
-
 
 export default async function handler(
   req: NextApiRequest,
